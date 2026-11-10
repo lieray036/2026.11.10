@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.res.imageResource
+import kotlinx.coroutines.delay
 import tw.edu.pu.csim.tcyang.a20261110.ui.theme._20261110Theme
 
 class MainActivity : ComponentActivity() {
@@ -45,9 +46,19 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
     var CanvasWidth by remember { mutableFloatStateOf(0f) }
     var CanvasHeigh by remember { mutableFloatStateOf(0f) }
 
+    // 小小兵的水平移動距離
+    var minionsX by remember { mutableFloatStateOf(0f) }
+
+    // 每秒向右移動 10px
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1000L)
+            minionsX += 10f
+        }
+    }
+
     val minionsImage: ImageBitmap =
         ImageBitmap.imageResource(id = R.drawable.minions)
-
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -63,16 +74,13 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
             val minionsWidth = minionsImage.width
             val minionsHeight = minionsImage.height
 
-
             val offsetX = (size.width - minionsWidth) / 2f
             val offsetY = (size.height - minionsHeight) / 2f
 
-
-            translate(offsetX, offsetY) {
+            // 繪製小小兵，每秒向右移動 10px
+            translate(offsetX + minionsX, offsetY) {
                 drawImage(minionsImage)
             }
-
-
 
             drawCircle(
                 Color.Magenta,
@@ -80,14 +88,12 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
                 Offset(300f, 600f)
             )
 
-
             drawRect(
                 Color.Blue,
                 Offset(300f, 200f),
                 Size(200f, 200f),
                 style = Stroke(width = 10f)
             )
-
 
             drawLine(
                 Color.Red,
@@ -97,7 +103,8 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
             )
         }
 
-
-        Text(text = "畫布寬度 $CanvasWidth, 長度 $CanvasHeigh")
+        Text(
+            text = "畫布寬度 $CanvasWidth, 長度 $CanvasHeigh"
+        )
     }
 }
