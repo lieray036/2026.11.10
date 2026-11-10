@@ -47,24 +47,34 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
     var CanvasWidth by remember { mutableFloatStateOf(0f) }
     var CanvasHeigh by remember { mutableFloatStateOf(0f) }
 
-    // 小小兵的 X、Y 座標
+    // 小小兵 X、Y 座標
     var minionsX by remember { mutableFloatStateOf(0f) }
     var minionsY by remember { mutableFloatStateOf(0f) }
 
     // 控制開始與停止
     var isMoving by remember { mutableStateOf(false) }
 
-    // 每秒向右下方移動 10px
+    val minionsImage: ImageBitmap =
+        ImageBitmap.imageResource(id = R.drawable.minions)
+
+    // 每秒向右下移動 10px
     LaunchedEffect(isMoving) {
         while (isMoving) {
             delay(100L)
+
             minionsX += 10f
             minionsY += 10f
+
+            // 小小兵整個離開畫布後，回到左上角
+            if (
+                minionsX > CanvasWidth ||
+                minionsY > CanvasHeigh
+            ) {
+                minionsX = 0f
+                minionsY = 0f
+            }
         }
     }
-
-    val minionsImage: ImageBitmap =
-        ImageBitmap.imageResource(id = R.drawable.minions)
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -122,6 +132,7 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
             }
         }
 
+        // 顯示畫布大小
         Text(
             text = "畫布寬度 $CanvasWidth, 長度 $CanvasHeigh"
         )
